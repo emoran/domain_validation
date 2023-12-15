@@ -1,0 +1,24 @@
+{
+  "configs": [
+    "template.xml"
+  ],
+  "secureProperties": [],
+  "redeploymentEnabled": true,
+  "name": "7a4354b5-9511-48e4-849c-402c3d4654ec:domain_validation:1.0.0",
+  "minMuleVersion": "4.1.1",
+  "requiredProduct": "MULE_EE",
+  "classLoaderModelLoaderDescriptor": {
+    "id": "mule",
+    "attributes": {}
+  },
+  "bundleDescriptorLoader": {
+    "id": "mule",
+    "attributes": {
+      "groupId": "7a4354b5-9511-48e4-849c-402c3d4654ec",
+      "classifier": "mule-policy",
+      "artifactId": "domain_validation",
+      "type": "jar",
+      "version": "1.0.0"
+    }
+  }
+}
