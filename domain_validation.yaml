@@ -1,6 +1,6 @@
-id: domain_validation
-name: domain_validation
-description: Domain validation
+id: Domain_filter
+name: Domain_filter
+description: Domain filter policy
 category: Custom
 type: custom
 resourceLevelSupported: true
@@ -8,4 +8,12 @@ encryptionSupported: false
 standalone: true
 requiredCharacteristics: []
 providedCharacteristics: []
-configuration: []
+configuration:
+  - propertyName: whitelistDomain
+    name: Client ID - Whitelist Domain
+    description: Client ID - 123456789,123456788
+    type: keyvalues
+    allowMultiple: true
+    defaultValue: false
+    optional: true
+    sensitive: false

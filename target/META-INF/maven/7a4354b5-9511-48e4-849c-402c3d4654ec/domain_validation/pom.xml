@@ -6,7 +6,7 @@
 
     <groupId>7a4354b5-9511-48e4-849c-402c3d4654ec</groupId>
     <artifactId>domain_validation</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.14</version>
 
     <name>domain_validation</name>
     <description>Domain validation</description>

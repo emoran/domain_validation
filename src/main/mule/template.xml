@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:http-policy="http://www.mulesoft.org/schema/mule/http-policy"
       xmlns:http-transform="http://www.mulesoft.org/schema/mule/http-policy-transform"
@@ -7,19 +8,39 @@
                http://www.mulesoft.org/schema/mule/http-policy http://www.mulesoft.org/schema/mule/http-policy/current/mule-http-policy.xsd
                http://www.mulesoft.org/schema/mule/http-policy-transform http://www.mulesoft.org/schema/mule/http-policy-transform/current/mule-http-policy-transform.xsd">
 
+    <http-policy:proxy name="policy-template">
+        <http-policy:source>
 
-   <http-policy:source>
+            <logger level="INFO" doc:name="Logger" message="#[attributes]"/>
+            <logger level="INFO" doc:name="Logger" message="#[message]"/>
+            <logger level="INFO" doc:name="Logger" doc:id="e4937065-06df-4699-ada9-9fd038a79acc" message="#[attributes.headers.client_id]"/>
+
             <set-variable variableName="listDomainFilter" value="#[[]]" />
-            {{#each listDomainFilter}}
-            <set-variable variableName="keyData" value="{{{this.key}}}" />
-            <set-variable variableName="valueData" value="{{{this.value}}}" />
-            <set-variable variableName="listDomainFilter" value="#[vars.listDomainFilter ++ [{key: vars.keyData, value: vars.valueData}]]" />
-            {{/each}}
-            <set-variable variableName="whitelistDomainByClientId" value="#[(vars.listDomainFilter filter ((item, index) -> item.key==attributes.headers.client_id)).value[0] default '' ]" />
-            <set-variable variableName="allowDomain" value="#[vars.whitelistDomainByClientId splitBy ',' map trim($)]" />
-            <set-variable variableName="notAllowDomain" value="#[output application/json --- payload.receivers filter ((item, index) -> not (vars.allowDomain contains  item))]" />
-            <set-variable variableName="whitelistDomain" value="#[(vars.listPhoneFilter filter ((item, index) -> item.key==attributes.headers.client_id)).value[0] default '' ]" />
 
+            <set-variable variableName="incomingDomainRequest" value="#[attributes.headers.host]" />
+            
+            {{#each whitelistDomain}}
+
+                <logger level="INFO" doc:name="Logger" message="{{{this.key}}}:{{{this.value}}}"/>
+                <set-variable variableName="keyData" value="{{{this.key}}}" />
+                <set-variable variableName="valueData" value="{{{this.value}}}" />
+                <set-variable variableName="listDomainFilter" value="#[vars.listDomainFilter ++ [{key: vars.keyData, value: vars.valueData}]]" />
+            {{/each}}
+
+            <logger level="INFO" doc:name="Logger" message="#[vars.listDomainFilter]"/>
+            
+            <set-variable variableName="whitelistDomainByClientId" value="#[(vars.listDomainFilter filter ((item, index) -> item.key==attributes.headers.client_id)).value[0] default '' ]" />
+            
+            <set-variable variableName="allowDomain" value="#[vars.whitelistDomainByClientId splitBy ',' map trim($)]" />
+            
+            
+            <logger level="INFO" doc:name="test" message="#[vars.allowDomain]"/>
+
+            
+
+            <set-variable variableName="notAllowDomain" value="#[output application/json --- vars.listDomainFilter filter ((item, index) -> not (vars.allowDomain contains  item))]" />
+            
+            <logger level="INFO" doc:name="test" message="#[vars.notAllowDomain]"/>
             <choice>
                 <when expression="#[(vars.listDomainFilter.key default[] contains attributes.headers.client_id) and sizeOf(vars.notAllowDomain)>0]">
                     <http-transform:set-response statusCode="403">
